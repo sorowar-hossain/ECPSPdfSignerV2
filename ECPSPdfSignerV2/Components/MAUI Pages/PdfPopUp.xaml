@@ -1,0 +1,66 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="ECPSPdfSignerV2.Components.MAUI_Pages.PdfPopUp"
+               CanBeDismissedByTappingOutsideOfPopup="False"
+               Size="1200,800"
+               HorizontalOptions="Fill"
+               VerticalOptions="Center">
+
+    <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header row -->
+            <RowDefinition Height="*" />
+            <!-- WebView row -->
+            <RowDefinition Height="Auto" />
+            <!-- Button row -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Header -->
+        <Label x:Name="headerLabel" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" FontSize="30" FontAttributes="Bold" TextColor="DarkSlateBlue" Grid.Row="0" Grid.ColumnSpan="2"/>
+
+        <!-- WebView -->
+        <WebView x:Name="pdfview" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.ColumnSpan="2" />
+
+        <!-- Back Button -->
+        <Button x:Name="BackButton" Text="Back to List" Clicked="OnBackButtonClicked" HorizontalOptions="Start" VerticalOptions="EndAndExpand" FontAttributes="Bold" Grid.Row="2" Grid.Column="0" Margin="10" IsVisible="False" >
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup Name="CommonStates">
+                    <VisualState Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="MediumSlateBlue" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="DarkSlateBlue" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Button>
+
+        <!-- Close Button -->
+        <Button x:Name="CloseButton" Clicked="OnCloseButtonClicked" HorizontalOptions="End" VerticalOptions="EndAndExpand" FontAttributes="Bold" Grid.Row="2" Grid.Column="1" Margin="10">
+            <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup Name="CommonStates">
+                <VisualState Name="Normal">
+                    <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="ForestGreen" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState Name="PointerOver">
+                    <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="DarkGreen" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Button>
+    </Grid>
+</toolkit:Popup>

@@ -1,0 +1,78 @@
+﻿@page "/about" 
+
+<div class="card-header">
+    <h3 style="color: #052A49;"> <strong>About</strong></h3>
+</div>
+
+<div class="card p-3 mt-5 mb-5">
+    <p class="text-secondary">
+        <b>
+            PQSigner is a desktop application designed to simplify the process of signing official documents. To use this application, you need to have a digital certificate connected to your local machine. In this example, we assume you have a Dohatec Digital Certificate and a Dongle. Here is a step-by-step guide to signing a document using PQSigner.
+        </b>
+    </p>
+
+    <div class="card mb-4 mt-4 p-4 border-light bg-light shadow-sm">
+        
+        <hr />
+        <br />
+        <ul>
+            <li>
+                <h5 style="color: darkslateblue;"><b>Login</b></h5>
+                <p class="text-secondary p-2">
+                    Use your username and password to log into the application. The credentials are the same as the Web Application.
+                </p>
+            </li>
+            <li>
+                <h5 style="color: darkslateblue;"><b>Pending Files</b></h5>
+                <p class="text-secondary p-2">
+                    Go to the 'Pending Files' tab to view the list of files that need your signature. You can search for a file using various fields such as File Number, Meeting Number, Case Type, or Floor Numbers.
+                </p>
+            </li>
+            <li>
+                <div class="step mt-4">
+                    <h5 style="color: darkslateblue;"><b>Preview File</b></h5>
+                    <p class="text-secondary">
+                        Click on a file number to preview the document before signing. Ensure the File Number at the top of the preview matches before proceeding to sign.
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="step mt-4">
+                    <h5 style="color: darkslateblue;"><b>Proceed to Sign </b></h5>
+                    <p class="text-secondary">
+                        Connect the Dongle to your local PC if you haven't yet. After reviewing the document, click the 'Sign' button to digitally sign the file.
+                    </p>
+                </div>
+            </li>
+         
+            <li>
+                <div class="step mt-4">
+                    <h5 style="color: darkslateblue;"><b>Upload and Verify</b></h5>
+                    <p class="text-secondary">
+                        Upload the file by clicking 'Complete' button and complete the process. The signed document should be updated in the system. Check the 'Signed Files' tab to ensure the document has been successfully signed and uploaded
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="step mt-4">
+                    <h5 style="color: darkslateblue;"><b>Repeat the Process</b></h5>
+                    <p class="text-secondary">
+                        Go back to the 'Pending Files' tab and repeat the process for any additional documents.
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+</div>
+<style>
+    p {
+        font-size: 20px;
+    }
+    h5{
+        font-size: 22px;
+    }
+</style>
+@code {
+
+}

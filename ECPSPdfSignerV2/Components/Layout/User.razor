@@ -1,0 +1,51 @@
+@using ECPSPdfSignerV2.Data
+@using ECPSPdfSignerV2.Services
+
+@inject APIService service
+@inject AppState appState
+@inject NavigationManager navManager
+
+<div class="row">         
+    <div class="col-3 text-end">
+        User : @SD._UserName
+    </div>
+    <div class="col-3 text-end">
+        Role : @SD._CurrentUserRole
+    </div>
+    <div class="col-3 text-end">
+        <select @onchange="@(async (e) => await SelectCurrentUserRole(e))" style="background-color: #08355E; color: white; font-weight: bold;">
+            <option value="">--Change Role--</option>
+            @foreach (var role in roles)
+            {
+                <option value="@role">@role</option>
+            }
+        </select>
+    </div>
+    <div class="col-3 text-end">
+        <button class="btn btn-danger" @onclick="Logout"> <b>Logout</b></button>
+    </div>
+</div>
+
+@code {
+
+    private List<string> roles = SD._UserRoles;
+
+    private async Task SelectCurrentUserRole(ChangeEventArgs e)
+    {
+        var selectedRole = e.Value?.ToString();
+
+        if (!string.IsNullOrWhiteSpace(selectedRole) && Guid.TryParse(await SecureStorage.GetAsync("userID"), out Guid userID))
+        {
+            await service.SelectUserRole(userID, selectedRole);
+            navManager.Refresh();
+        }
+    }
+
+    private async void Logout()
+    {
+        await service.Logout();
+        appState.LoggedIn = false;
+        navManager.NavigateTo("/");
+    }
+}
+

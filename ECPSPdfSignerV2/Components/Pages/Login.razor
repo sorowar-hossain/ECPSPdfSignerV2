@@ -1,0 +1,70 @@
+﻿@page "/login"
+@using ECPSPdfSignerV2.Data
+@using ECPSPdfSignerV2.Model
+@using ECPSPdfSignerV2.Services
+@inject APIService service
+@inject NavigationManager navigationManager
+@inject AppState appState
+@inject IJSRuntime JS
+
+<div class="login-container">
+    <div class="bb-login">
+        <form class="bb-form validate-form">
+            <span class="bb-form-title p-b-26"> Welcome to PQSigner </span>
+            <div class="wrap-input100 validate-input">
+                <input class="input100" type="text" name="username" @bind="loginModel.Username">
+                <span class="bbb-input" data-placeholder="Username"></span>
+            </div>
+            <div class="wrap-input100 validate-input">
+                <input class="input100" type="password" name="pass" @bind="loginModel.Password">
+                <span class="bbb-input" data-placeholder="Password"></span>
+            </div>
+            <div class="login-container-form-btn">
+                <div class="bb-login-form-btn">
+                    <div class="bb-form-bgbtn"></div> <button type="button" class="bb-form-btn" @onclick="PerformLogin"> Login </button>
+                </div>
+            </div>
+        </form>
+
+        <div id='toast'>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private LoginModel loginModel = new();
+
+    private async void PerformLogin(MouseEventArgs args)
+    {
+        if (string.IsNullOrWhiteSpace(loginModel.Username))
+        {
+            await JS.InvokeVoidAsync("showToastInDiv", "Please Enter Username", "danger", "toast");
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(loginModel.Password))
+        {
+            await JS.InvokeVoidAsync("showToastInDiv", "Please Enter Password", "danger", "toast");
+            return;
+        }
+
+        if (!service.InternetConnection())
+        {
+            await JS.InvokeVoidAsync("showToastInDiv", "Please Check your Connectivity !!", "danger", "toast");
+            return;
+        }
+
+        bool isVerified = await service.LoginVerify(loginModel);
+
+        if (isVerified)
+        {
+            appState.LoggedIn = true;
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("showToastInDiv", "Wrong Username or Password !!", "danger", "toast");
+        }
+        
+    }
+}

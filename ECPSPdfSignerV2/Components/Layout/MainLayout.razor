@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using ECPSPdfSignerV2.Data
+@using ECPSPdfSignerV2.Services
+@inherits LayoutComponentBase
+@inject APIService service
+@inject AppState appState
+@inject NavigationManager navManager
 
 <div class="page">
     <div class="sidebar">
@@ -6,12 +11,27 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="layout-frontbar">
+            <h2 class="layout-frontbar-Title">Electronic Construction Permitting System (ECPS)</h2>                                       
         </div>
 
         <article class="content px-4">
             @Body
         </article>
+
+        <footer class="footer fixed-bottom bg-ecps p-2" >
+            <div class="row mt-2">
+                <div class="col-md-6 col-sm-3">
+                    &copy; Dohatec New Media 2024
+                </div>
+
+                @if (appState.LoggedIn)
+                {
+                    <div class="col-md-6 col-sm-9">
+                        <User />
+                    </div> 
+                }
+            </div>
+        </footer>
     </main>
 </div>

@@ -1,0 +1,179 @@
+﻿@page "/signedFiles"
+@using CommunityToolkit.Maui.Views
+@using ECPSPdfSignerV2.Components.MAUI_Pages
+@using ECPSPdfSignerV2.Data
+@using ECPSPdfSignerV2.Services
+@using EcpsService.Models.DTO
+
+
+@inject IJSRuntime JS
+@implements IDisposable
+@inject APIService service
+@inject NavigationManager navigationManager
+
+<div class="card-header">
+    <h3 style="color: #052A49;"> <strong>Signed Files</strong></h3>
+</div>
+
+
+<div class="card p-2 mt-5 mb-5" style="display: @(state == FileState.ShowList ? "display" : "none")">
+    @if (loading)
+    {
+        <button class="btn btn-primary btn-lg d-flex justify-content-between align-items-center" type="button" disabled>
+            <strong>Loading Files</strong>
+            <span class="spinner-border spinner-border ms-auto" role="status" aria-hidden="true"></span>
+        </button>
+    }
+    else
+    {
+        <table id="signed_files_table" class="table table-striped table-bordered table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th class="text-center text-info"> File No </th>
+                    <th class="text-center text-info"> Case Type </th>
+                    <th class="text-center text-info"> Zone-SubZone </th>
+                    <th class="text-center text-info"> Floor </th>
+                    <th class="text-center text-info"> Meeting No </th>
+                </tr>
+            </thead>
+            @if (Files != null)
+            {
+                <tbody>
+                    @foreach (var file in Files)
+                    {
+                        <tr>
+                            <td class="text-center">@file.fileNo</td>
+                            <td class="text-center">@file.caseType</td>
+                            <td class="text-center">@file.zoneSubZone</td>
+                            <td class="text-center">@file.numberOfFloors</td>
+                            <td class="text-center">@file.meetingNo</td>
+                        </tr>
+                    }
+                </tbody>
+            }
+
+        </table>
+    }
+    
+
+</div>
+<div style="display: @(state == FileState.ShowList ? "display" : "none")">
+    <br />
+    <br />
+    <br />
+</div>
+
+<div class="card p-3 mt-5 mb-5" style="display: @(state == FileState.FileDownloading == true ? "display" : "none")">
+
+    <button class="btn btn-primary" type="button" disabled>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Downloading...
+    </button>
+</div>
+
+
+@code {
+
+    List<SignPendingFileDTO>? Files { get; set; }
+    private bool internetConnection { get; set; }
+    private bool loading = true;
+    private FileState state { get; set; }
+
+    protected override async void OnInitialized()
+    {
+        await RefreshData();
+        loading = false;
+        state = FileState.ShowList;
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (Files != null)
+        {
+            if (firstRender)
+            {
+                await JS.InvokeVoidAsync("window.DataTables2.buildDataTable", DotNetObjectReference.Create(this));
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("window.DataTables2.destroyDataTable");
+                await JS.InvokeVoidAsync("window.DataTables2.buildDataTable", DotNetObjectReference.Create(this));
+            }
+        }
+    }
+
+    public async void Dispose()
+    {
+        await JS.InvokeVoidAsync("window.DataTables2.destroyDataTable");
+    }
+
+    private async Task RefreshData()
+    {
+        if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+        {
+            internetConnection = false;
+        }
+        else
+        {
+            internetConnection = true;
+        }
+        Files = await service.GetSignedFilesAsync();
+    }
+
+    [JSInvokable]
+    public async void SelectRow(string fileNo)
+    {
+        state = FileState.FileDownloading;
+        StateHasChanged();
+
+        var docName = await service.DownloadDocument(fileNo);
+
+        if (docName == null)
+            return;
+
+        state = FileState.ShowSignedPDF;
+        StateHasChanged();
+
+        var filePath = Path.Combine(Utility.GetFolderPath(), docName);
+
+        if (File.Exists(filePath))
+        {
+            ShowSignedPDF(filePath);
+        }
+
+        StateHasChanged();
+    }
+
+    private async void ShowSignedPDF(string localFilePath)
+    {
+        if (!File.Exists(localFilePath))
+            return;
+
+        var result = await App.Current.MainPage.ShowPopupAsync(new PdfPopUp(localFilePath, "", "Close", true));
+
+        if (result is bool boolResult)
+        {
+            if (boolResult)
+            {
+                HidePDF();
+
+                // Delete File from local storage after Prviewing
+                Utility.DeleteFile(localFilePath);
+            }
+        }
+    }
+
+    private void HidePDF()
+    {
+        navigationManager.Refresh();
+    }
+
+    enum FileState
+    {
+        ShowList,
+        FileDownloading,
+        ShowSignedPDF
+    }
+}
