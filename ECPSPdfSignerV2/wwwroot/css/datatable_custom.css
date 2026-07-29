@@ -1,0 +1,13 @@
+﻿
+.custom-td {
+    font-family: 'Arial', sans-serif; 
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+tr {
+    height: 50px
+}
+
+.dataTable tbody tr td:first-child {
+    cursor: pointer;
+}
